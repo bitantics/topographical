@@ -20,8 +20,9 @@ grid w h = coord <$> 0 .. (h - 1) <*> 0 .. (w - 1)
 foreign import noise :: Number -> Number -> Number -> Number
 
 noiseAt :: Coord -> Number
-noiseAt (Coord { x, y }) = noise (scaled x) (scaled y) 0.0
+noiseAt (Coord { x, y }) = unit $ noise (scaled x) (scaled y) 0.0
   where scaled n = (toNumber n) / 100.0
+        unit n = (n + 1.0) / 2.0
 
 noiseGrid :: Int -> Int -> Array Number
 noiseGrid w h = noiseAt <$> grid w h
