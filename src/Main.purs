@@ -9,9 +9,6 @@ import Data.Array ((..))
 -- coordinates --
 newtype Coord = Coord { x :: Int, y :: Int }
 
-instance showCoord :: Show Coord where
-  show (Coord { x, y }) = "(" ++ show x ++ ", " ++ show y ++ ")"
-
 grid :: Int -> Int -> Array Coord
 grid w h = coord <$> 0 .. (h - 1) <*> 0 .. (w - 1)
   where coord y x = Coord { x, y }
