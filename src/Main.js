@@ -11,11 +11,13 @@ exports.noise = function noise( x ) {
   };
 };
 
-exports.updateImageData = function updateImageData( imgData ) {
-  return function( data ) {
-    return new ImageData(
-      new Uint8ClampedArray( data ),
-      imgData.width, imgData.height
-    );
+exports.createImageData = function updateImageData( data ) {
+  return function( width ) {
+    return function( height ) {
+      return new ImageData(
+        new Uint8ClampedArray( data ),
+        width, height
+      );
+    };
   };
 };

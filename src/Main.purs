@@ -3,11 +3,11 @@ module Main where
 import Prelude
 import Control.Monad.Eff (Eff)
 import Data.Maybe (Maybe(..))
-import Data.Int (toNumber)
+import Data.Int (toNumber, round)
 import Data.Array ((..))
 import Graphics.Canvas (
   Canvas(), Context2D(), ImageData(),
-  getCanvasElementById, getContext2D, putImageData, createImageData
+  getCanvasElementById, getContext2D, putImageData
 )
 
 -- coordinates --
@@ -29,12 +29,15 @@ noiseGrid :: Int -> Int -> Array Number
 noiseGrid w h = noiseAt <$> grid w h
 
 -- image --
-foreign import updateImageData :: ImageData -> Array Int -> ImageData
+foreign import createImageData :: Array Int -> Int -> Int -> ImageData
 
-image :: forall eff. Context2D -> Eff (canvas :: Canvas | eff) ImageData
-image ctx = do
-  img <- createImageData ctx 2.0 2.0
-  return $ updateImageData img [
+noisePixel :: Number -> Array Int
+noisePixel n = [ np, np, np, 255 ]
+  where np = round (n * 255.0)
+
+image :: ImageData
+image = createImageData imageData 2 2 
+  where imageData = [
     255, 0, 255, 255,
     255, 0, 255, 255,
     255, 0, 255, 255,
@@ -43,8 +46,7 @@ image ctx = do
 
 renderImage :: forall eff. Context2D -> Eff (canvas :: Canvas | eff) Unit
 renderImage ctx = do
-  img <- image ctx
-  putImageData ctx img 0.0 0.0
+  putImageData ctx image 0.0 0.0
   return unit
 
 -- main --
