@@ -4,11 +4,14 @@ import Prelude
 import Control.Monad.Eff (Eff)
 import Data.Maybe (Maybe(..))
 import Data.Int (toNumber, round)
-import Data.Array ((..))
+import Data.Array ((..), concat)
 import Graphics.Canvas (
   Canvas(), Context2D(), ImageData(),
   getCanvasElementById, getContext2D, putImageData
 )
+
+width = 1400
+height = 800
 
 -- coordinates --
 newtype Coord = Coord { x :: Int, y :: Int }
@@ -36,13 +39,8 @@ noisePixel n = [ np, np, np, 255 ]
   where np = round (n * 255.0)
 
 image :: ImageData
-image = createImageData imageData 2 2 
-  where imageData = [
-    255, 0, 255, 255,
-    255, 0, 255, 255,
-    255, 0, 255, 255,
-    255, 0, 255, 255
-  ]
+image = createImageData imageData width height
+  where imageData = concat $ noisePixel <$> noiseGrid width height
 
 renderImage :: forall eff. Context2D -> Eff (canvas :: Canvas | eff) Unit
 renderImage ctx = do
