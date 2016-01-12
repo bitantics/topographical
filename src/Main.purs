@@ -3,14 +3,17 @@ module Main where
 import Prelude
 import Control.Monad.Eff (Eff)
 import Data.Maybe (Maybe(..))
-import Data.Int (toNumber, round)
+import Data.Int (toNumber)
 import Data.Array ((..), concat)
 import Graphics.Canvas (
   Canvas(), Context2D(), ImageData(),
   getCanvasElementById, getContext2D, putImageData
 )
 
+width :: Int
 width = 1400
+
+height :: Int
 height = 800
 
 -- coordinates --
@@ -35,8 +38,10 @@ noiseGrid w h = noiseAt <$> grid w h
 foreign import createImageData :: Array Int -> Int -> Int -> ImageData
 
 noisePixel :: Number -> Array Int
-noisePixel n = [ np, np, np, 255 ]
-  where np = round (n * 255.0)
+noisePixel n = [ np 190, np 186, np 209, np 255 ]
+  where
+    np max | 0.49 < n && n < 0.51 = max
+           | otherwise            = 0
 
 image :: ImageData
 image = createImageData imageData width height
