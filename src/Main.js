@@ -5,9 +5,7 @@ var SimplexNoise = require( 'simplex-noise' ),
 
 exports.noise = function noise( x ) {
   return function( y ) {
-    return function( z ) {
-      return simplex.noise3D( x, y, z );
-    };
+    return simplex.noise2D( x, y );
   };
 };
 

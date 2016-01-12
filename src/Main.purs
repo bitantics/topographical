@@ -20,10 +20,10 @@ import Graphics.Canvas (
 )
 
 width :: Int
-width = 1400
+width = 400
 
 height :: Int
-height = 800
+height = 225
 
 -- coordinates --
 newtype Coord = Coord { x :: Int, y :: Int }
@@ -33,10 +33,10 @@ grid w h = coord <$> 0 .. (h - 1) <*> 0 .. (w - 1)
   where coord y x = Coord { x, y }
 
 -- noise --
-foreign import noise :: Number -> Number -> Number -> Number
+foreign import noise :: Number -> Number -> Number
 
 noiseAt :: Coord -> Number
-noiseAt (Coord { x, y }) = unit $ noise (scaled x) (scaled y) 0.0
+noiseAt (Coord { x, y }) = unit $ noise (scaled x) (scaled y)
   where scaled n = (toNumber n) / 100.0
         unit n = (n + 1.0) / 2.0
 
@@ -66,16 +66,16 @@ renderImage ctx t = do
   putImageData ctx (image t) 0.0 0.0
   return unit
 
-seconds :: forall eff. Eff (dom :: DOM, timer :: Timer | eff) (Signal Number)
-seconds = do
+pulse :: forall eff. Eff (dom :: DOM, timer :: Timer | eff) (Signal Number)
+pulse = do
   nowMs <- animationFrame
   return $ nowMs ~> secs
-    where secs ms = ms / 1000.0
+    where secs ms = ms / 30000.0
 
 -- main --
 main :: forall eff. Eff (timer :: Timer, dom :: DOM, canvas :: Canvas | eff) Unit
 main = do
   Just canvas <- getCanvasElementById "topological"
   ctx <- getContext2D canvas
-  s <- seconds
-  runSignal $ s ~> (renderImage ctx)
+  p <- pulse
+  runSignal $ p ~> (renderImage ctx)
