@@ -2,9 +2,13 @@ module Main where
 
 import Prelude
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log)
+import Data.Maybe (Maybe(..))
 import Data.Int (toNumber)
 import Data.Array ((..))
+import Graphics.Canvas (
+  Canvas(), Context2D(), ImageData(),
+  getCanvasElementById, getContext2D, putImageData, createImageData
+)
 
 -- coordinates --
 newtype Coord = Coord { x :: Int, y :: Int }
@@ -24,7 +28,28 @@ noiseAt (Coord { x, y }) = unit $ noise (scaled x) (scaled y) 0.0
 noiseGrid :: Int -> Int -> Array Number
 noiseGrid w h = noiseAt <$> grid w h
 
+-- image --
+foreign import updateImageData :: ImageData -> Array Int -> ImageData
+
+image :: forall eff. Context2D -> Eff (canvas :: Canvas | eff) ImageData
+image ctx = do
+  img <- createImageData ctx 2.0 2.0
+  return $ updateImageData img [
+    255, 0, 255, 255,
+    255, 0, 255, 255,
+    255, 0, 255, 255,
+    255, 0, 255, 255
+  ]
+
+renderImage :: forall eff. Context2D -> Eff (canvas :: Canvas | eff) Unit
+renderImage ctx = do
+  img <- image ctx
+  putImageData ctx img 0.0 0.0
+  return unit
+
 -- main --
-main :: forall eff. Eff (console :: CONSOLE | eff) Unit
+main :: forall eff. Eff (canvas :: Canvas | eff) Unit
 main = do
-  log $ show $ noiseGrid 10 1
+  Just canvas <- getCanvasElementById "topological"
+  ctx <- getContext2D canvas
+  renderImage ctx

@@ -10,3 +10,12 @@ exports.noise = function noise( x ) {
     };
   };
 };
+
+exports.updateImageData = function updateImageData( imgData ) {
+  return function( data ) {
+    return new ImageData(
+      new Uint8ClampedArray( data ),
+      imgData.width, imgData.height
+    );
+  };
+};
