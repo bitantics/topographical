@@ -1,11 +1,11 @@
 // module Main
 
-var SimplexNoise = require( 'simplex-noise' ),
-    simplex = new SimplexNoise( Math.random );
+var SimplexNoise = require( 'fast-simplex-noise' ),
+    simplex = new SimplexNoise();
 
 exports.noise = function noise( x ) {
   return function( y ) {
-    return simplex.noise2D( x, y );
+    return simplex.getRaw2DNoise( x, y );
   };
 };
 
